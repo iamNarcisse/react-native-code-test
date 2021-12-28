@@ -1,12 +1,10 @@
-import images from "@assets/index";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import CustomImage from "@src/components/common/Image";
 import { RegularText, TitleText } from "@src/components/common/Text";
 import Responsive from "@src/lib/responsive";
-import MockRequest from "@src/services";
 import { Layout } from "@ui-kitten/components";
 import React, { useState } from "react";
 import {
-  Image,
   LayoutChangeEvent,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -15,13 +13,11 @@ import {
   View,
 } from "react-native";
 
-const request = new MockRequest();
-
 interface ObjectLiteral {
   [key: string]: any;
 }
 interface BlogDetailRouteProp extends RouteProp<ObjectLiteral> {
-  params: { title?: string; content: string };
+  params: { title?: string; content: string; imageUrl: string };
 }
 
 const BlogDetailScreen = ({}) => {
@@ -64,8 +60,8 @@ const BlogDetailScreen = ({}) => {
   return (
     <Layout style={styles.container}>
       <ScrollView onLayout={handleLayout} onScrollEndDrag={handleScroll}>
-        <Image
-          source={images.dummyImage}
+        <CustomImage
+          source={{ uri: route.params.imageUrl }}
           style={styles.imageContainer}
           resizeMode="contain"
         />

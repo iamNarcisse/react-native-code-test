@@ -1,4 +1,3 @@
-import axios, { AxiosInstance } from "axios";
 import data from "@src/data/blogData.json";
 import Logger from "@src/lib/Logger";
 
@@ -13,12 +12,7 @@ interface Blog {
   views: number;
 }
 
-interface Interceptor {
-  request(): void;
-  response(): void;
-}
-
-const DELAY_TIME = 5000;
+const DELAY_TIME = 4;
 class MockRequest {
   private data: Array<Blog>;
   public errorInterceptor;
@@ -30,7 +24,7 @@ class MockRequest {
     };
   }
 
-  getBlog(id: string) {
+  getBlog(id: string): Blog {
     try {
       const data = this.data.filter((item) => item.title === id);
       if (!data.length) {

@@ -37,7 +37,11 @@ const FORM: Array<FormType> = [
   },
 ];
 const LoginScreen = () => {
-  const [loading, setLoading] = useState(false);
+  const [state, setState] = useState({
+    loading: false,
+    errorMsg: "",
+  });
+
   const {
     control,
     handleSubmit,
@@ -52,14 +56,24 @@ const LoginScreen = () => {
 
   const onSubmit = async (data: FormField) => {
     try {
-      setLoading(true);
-      const result = await auth.signInWithEmailAndPassword(
+      setState({
+        ...state,
+        loading: true,
+      });
+      const response = await auth.signInWithEmailAndPassword(
         data.email,
         data.password
       );
-      setLoading(false);
+      setState({
+        ...state,
+        loading: false,
+      });
     } catch (error) {
-      setLoading(false);
+      setState({
+        ...state,
+        loading: false,
+        errorMsg: "Login details is incorrect",
+      });
     }
   };
 
@@ -80,7 +94,16 @@ const LoginScreen = () => {
                 <Box>
                   <TextInput
                     onBlur={onBlur}
-                    onChangeText={onChange}
+                    onChangeText={(event) => {
+                      if (state.errorMsg) {
+                        setState({
+                          ...state,
+                          errorMsg: "",
+                        });
+                      }
+
+                      onChange(event);
+                    }}
                     value={value}
                     label={item.label}
                   />
@@ -99,13 +122,17 @@ const LoginScreen = () => {
         );
       })}
 
+      {state.errorMsg ? (
+        <RegularText status="danger" title={state.errorMsg} />
+      ) : null}
+
       <Box>
         <Button
           onPress={handleSubmit(onSubmit)}
           status="primary"
-          disabled={loading}
+          disabled={state.loading}
         >
-          {loading ? <ActivityIndicator /> : "Login"}
+          {state.loading ? <ActivityIndicator /> : "Login"}
         </Button>
       </Box>
     </Layout>

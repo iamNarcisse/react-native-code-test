@@ -1,19 +1,18 @@
 import bounce from "@assets/bounce.json";
-import Box from "@src/components/common/Box";
 import { MemoizedCard } from "@src/components/common/Card";
-import { RegularText } from "@src/components/common/Text";
 import Firebase from "@src/config/firebase";
 import blogData from "@src/data/blogData.json";
 import { useAppTheme } from "@src/hooks/useAppTheme";
-import Responsive from "@src/lib/responsive";
-import responsive from "@src/lib/responsive";
+import {
+  default as Responsive,
+  default as responsive,
+} from "@src/lib/responsive";
 import MockRequest from "@src/services";
 import { AppTheme } from "@src/types";
-import { Layout, useTheme, Icon } from "@ui-kitten/components";
+import { Icon, Layout } from "@ui-kitten/components";
 import LottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Alert, FlatList, StyleSheet } from "react-native";
-import * as Notifications from "expo-notifications";
+import { FlatList, StyleSheet } from "react-native";
 
 const request = new MockRequest();
 const HomeScreen = () => {
@@ -69,9 +68,19 @@ const HomeScreen = () => {
 
   const renderToggleIcon = () => {
     return theme === AppTheme.DARK ? (
-      <Icon style={styles.icon} fill="#8F9BB3" name="moon" onPress={logout} />
+      <Icon
+        style={styles.icon}
+        fill="#8F9BB3"
+        name="moon"
+        onPress={toggleTheme}
+      />
     ) : (
-      <Icon style={styles.icon} fill="#8F9BB3" name="sun" onPress={logout} />
+      <Icon
+        style={styles.icon}
+        fill="#8F9BB3"
+        name="sun"
+        onPress={toggleTheme}
+      />
     );
   };
 
@@ -83,7 +92,7 @@ const HomeScreen = () => {
         data={blogData.blogs}
         renderItem={renderItem}
         keyExtractor={(item) => item.title}
-        initialNumToRender={10}
+        initialNumToRender={3}
         removeClippedSubviews
       />
     </Layout>
@@ -94,7 +103,6 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    // backgroundColor: "red",
     paddingHorizontal: Responsive.widht(2),
     flex: 1,
   },
