@@ -1,16 +1,8 @@
 import data from "@src/data/blogData.json";
 import Logger from "@src/lib/Logger";
+import { Blog } from "@src/types";
 
 const BLOGS = data.blogs;
-
-interface Blog {
-  title: string;
-  imageUrl: string;
-  content: string;
-  author: string;
-  datePublished: string;
-  views: number;
-}
 
 const DELAY_TIME = 4;
 class MockRequest {

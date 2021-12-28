@@ -1,24 +1,32 @@
 import bounce from "@assets/bounce.json";
 import { MemoizedCard } from "@src/components/common/Card";
 import Firebase from "@src/config/firebase";
-import blogData from "@src/data/blogData.json";
 import { useAppTheme } from "@src/hooks/useAppTheme";
 import {
   default as Responsive,
   default as responsive,
 } from "@src/lib/responsive";
 import MockRequest from "@src/services";
-import { AppTheme } from "@src/types";
+import { AppTheme, Blog } from "@src/types";
 import { Icon, Layout } from "@ui-kitten/components";
 import LottieView from "lottie-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
 const request = new MockRequest();
+
+interface HomeState {
+  data: Blog[];
+  fetching: boolean;
+}
 const HomeScreen = () => {
   const { toggleTheme, theme } = useAppTheme();
   const [fetching, setFetching] = useState(false);
-  const [data, setData] = useState<any>([]);
+
+  const [state, setState] = useState<HomeState>({
+    data: [],
+    fetching: false,
+  });
 
   var animation = useRef<LottieView | null>();
 
@@ -35,15 +43,18 @@ const HomeScreen = () => {
     request
       .getAll()
       .then((data) => {
-        setData(data);
-        setFetching(false);
+        setState({
+          ...state,
+          fetching: false,
+          data,
+        });
       })
       .catch((error) => {
         setFetching(false);
       });
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: Blog }) => {
     return <MemoizedCard {...item} />;
   };
 
@@ -67,19 +78,13 @@ const HomeScreen = () => {
   }
 
   const renderToggleIcon = () => {
-    return theme === AppTheme.DARK ? (
+    const iconName = theme === AppTheme.DARK ? "moon" : "sun";
+    return (
       <Icon
         style={styles.icon}
         fill="#8F9BB3"
-        name="moon"
-        onPress={toggleTheme}
-      />
-    ) : (
-      <Icon
-        style={styles.icon}
-        fill="#8F9BB3"
-        name="sun"
-        onPress={toggleTheme}
+        name={iconName}
+        onPress={logout}
       />
     );
   };
@@ -89,10 +94,10 @@ const HomeScreen = () => {
       {renderToggleIcon()}
 
       <FlatList
-        data={blogData.blogs}
+        data={state.data}
         renderItem={renderItem}
         keyExtractor={(item) => item.title}
-        initialNumToRender={3}
+        initialNumToRender={10}
         removeClippedSubviews
       />
     </Layout>

@@ -16,3 +16,12 @@ export enum ScreenNames {
   HOME = "HomeScreen",
   DETAIL = "DetailScreen",
 }
+
+export interface Blog {
+  title: string;
+  imageUrl: string;
+  content: string;
+  author: string;
+  datePublished: string;
+  views: number;
+}
