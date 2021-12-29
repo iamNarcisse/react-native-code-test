@@ -25,6 +25,7 @@ export const useNotification = () => {
         title: `Complete reading ${title}`,
       },
       trigger: { seconds: PERIOD, repeats: true },
+      identifier,
     });
 
     return notifIdentifier;

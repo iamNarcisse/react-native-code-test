@@ -54,7 +54,7 @@ const BlogDetailScreen = () => {
         title,
       });
 
-      console.log("SCHEDULED ===>", notificationIdentifier);
+      // console.log("SCHEDULED ===>", notificationIdentifier);
     } catch (error) {
       Logger.log(error);
     }
@@ -68,10 +68,6 @@ const BlogDetailScreen = () => {
     if (!readingComplete) {
       handler();
     }
-
-    return () => {
-      navigation.removeListener("beforeRemove", () => {});
-    };
   }, [navigation, readingComplete]);
 
   const handleScroll = async (
@@ -191,3 +187,10 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
 });
+
+/**
+ * To do
+ * Prevent notification from popping up when user in on the app
+ * Put a circular progress bar
+ * Cleanups and refactor
+ */

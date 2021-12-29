@@ -11,7 +11,7 @@ import { AppTheme, Blog } from "@src/types";
 import { Icon, Layout } from "@ui-kitten/components";
 import LottieView from "lottie-react-native";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { FlatList, StyleSheet } from "react-native";
 
 const request = new MockRequest();
 

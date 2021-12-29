@@ -1,5 +1,6 @@
 import * as eva from "@eva-design/eva";
 import { ThemeContext } from "@src/context";
+import { useAppStatusState } from "@src/hooks/useAppState";
 import { useNotification } from "@src/hooks/useNotification";
 import { RootNavigator } from "@src/navigation";
 import { AuthenticatedUserProvider } from "@src/navigation/AuthenticatedProvider";
@@ -20,17 +21,10 @@ type Subscription = {
   remove: () => void;
 };
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
-
 const App = () => {
   const [activeTheme, setTheme] = useState(AppTheme.LIGHT);
   const { cancelNotification } = useNotification();
+  const { currentState } = useAppStatusState();
   const toggleTheme = (theme = AppTheme.DARK) => {
     const nextTheme = theme === AppTheme.DARK ? AppTheme.LIGHT : AppTheme.DARK;
     setTheme(nextTheme);
@@ -64,6 +58,27 @@ const App = () => {
       );
     };
   }, []);
+
+  useEffect(() => {
+    Notifications.setNotificationHandler({
+      handleNotification: async (notification) => {
+        // Don't show notification if user is on foreground
+        if (currentState === "active") {
+          return {
+            shouldShowAlert: false,
+            shouldPlaySound: false,
+            shouldSetBadge: false,
+          };
+        }
+
+        return {
+          shouldShowAlert: true,
+          shouldPlaySound: false,
+          shouldSetBadge: false,
+        };
+      },
+    });
+  }, [currentState, Notifications]);
 
   if (!loaded) {
     return null;
