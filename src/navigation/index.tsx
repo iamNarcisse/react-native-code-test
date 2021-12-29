@@ -1,12 +1,12 @@
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackHeaderProps,
 } from "@react-navigation/native-stack";
-import { RegularText } from "@src/components/common/Text";
 import Firebase from "@src/config/firebase";
 import { useAppAuthentication } from "@src/hooks/useAuthentication";
 import Logger from "@src/lib/Logger";
+import Responsive from "@src/lib/responsive";
 import BlogDetailScreen from "@src/screens/BlogDetailScreen";
 import HomeScreen from "@src/screens/HomeScreen";
 import LoginScreen from "@src/screens/LoginScreen";
@@ -20,7 +20,7 @@ const Header = (props: NativeStackHeaderProps) => {
   };
 
   return (
-    <Layout style={{ marginTop: 40, paddingHorizontal: 10 }}>
+    <Layout style={styles.header}>
       <Icon
         onPress={goBack}
         name="arrow-back-outline"
@@ -118,5 +118,10 @@ const styles = StyleSheet.create({
   icon: {
     width: 32,
     height: 32,
+  },
+  header: {
+    paddingTop: Responsive.height(5),
+    paddingBottom: Responsive.height(2),
+    paddingHorizontal: 10,
   },
 });

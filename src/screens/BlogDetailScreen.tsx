@@ -31,39 +31,18 @@ const BlogDetailScreen = () => {
     layoutHeight: 0,
     hasReadHeight: 0,
     contentSizeHeight: 0,
+    readingComplete: false,
   });
 
-  const { layoutHeight, hasReadHeight, contentSizeHeight } = state;
-
-  const cancelScheduledNotification = async () => {
-    const readBenchMark = BENCHMARK * contentSizeHeight;
-    // User just visited page but didn't  scroll(i.e read);
-    if (!hasReadHeight) {
-      return;
-    }
-
-    if (hasReadHeight < readBenchMark) {
-      return;
-    }
-    // cancel local notification
-    const notificationIdentifier = await getHasValue(title);
-
-    try {
-      await cancelNotification(notificationIdentifier);
-      console.log("CANCELLED", notificationIdentifier);
-    } catch (error) {
-      Logger.log(error);
-    }
-  };
+  const { layoutHeight, hasReadHeight, readingComplete } = state;
 
   const handleScheduleNotification = async () => {
-    const readBenchMark = BENCHMARK * contentSizeHeight;
     // User just visited page but didn't  scroll(i.e read);
     if (!hasReadHeight) {
       return;
     }
 
-    if (hasReadHeight > readBenchMark) {
+    if (readingComplete) {
       return;
     }
 
@@ -82,20 +61,40 @@ const BlogDetailScreen = () => {
   };
 
   useEffect(() => {
+    const handler = navigation.addListener("beforeRemove", () => {
+      handleScheduleNotification();
+    });
+
+    if (!readingComplete) {
+      handler();
+    }
+
     return () => {
-      navigation.addListener("beforeRemove", () => {
-        handleScheduleNotification();
-      });
+      navigation.removeListener("beforeRemove", () => {});
     };
-  }, [navigation]);
+  }, [navigation, readingComplete]);
 
-  useEffect(() => {
-    cancelScheduledNotification();
-  }, [cancelScheduledNotification]);
-
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+  const handleScroll = async (
+    event: NativeSyntheticEvent<NativeScrollEvent>
+  ) => {
     const contentSizeHeight = event.nativeEvent.contentSize.height - 20;
     const hasReadHeight = event.nativeEvent.contentOffset.y + layoutHeight;
+    const readBenchMark = BENCHMARK * contentSizeHeight;
+
+    if (hasReadHeight > readBenchMark && !readingComplete) {
+      //User has completed reading article; cancel local notification
+      const notificationIdentifier = await getHasValue(title);
+      await cancelNotification(notificationIdentifier);
+      setState({
+        ...state,
+        readingComplete: true,
+        contentSizeHeight,
+        hasReadHeight,
+      });
+
+      return;
+    }
+
     setState({
       ...state,
       contentSizeHeight,
