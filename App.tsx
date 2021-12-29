@@ -90,7 +90,7 @@ const App = () => {
       <ApplicationProvider
         {...eva}
         theme={{ ...eva[activeTheme], ...theme }}
-        customMapping={{ ...eva.mapping, ...mapping }}
+        customMapping={{ ...mapping, ...eva.mapping }}
       >
         <SafeAreaView style={{ flex: 1 }}>
           <AuthenticatedUserProvider>
