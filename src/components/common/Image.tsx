@@ -1,8 +1,8 @@
 import { ImageCachManager } from "@src/lib/CacheImage";
 import Logger from "@src/lib/Logger";
+import { Skeleton } from "moti/skeleton";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   ImageProps,
   ImageSourcePropType,
@@ -10,6 +10,7 @@ import {
   InteractionManager,
   StyleProp,
 } from "react-native";
+
 const useCache = new ImageCachManager();
 
 interface ImageProp extends ImageProps {
@@ -71,12 +72,8 @@ const CustomImage = ({ source, ...rest }: ImageProp) => {
     };
   }, []);
 
-  if (!state.uri && state.working) {
-    return <ActivityIndicator />;
-  }
-
-  if (!state.uri && !state.working) {
-    return null;
+  if (!state.uri) {
+    return <Skeleton show={true} width="100%" height={100} colorMode="light" />;
   }
 
   const mySource: ImageSourcePropType = _source?.uri

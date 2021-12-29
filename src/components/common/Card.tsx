@@ -5,7 +5,7 @@ import { Blog, ScreenNames } from "@src/types";
 import { Card, Layout } from "@ui-kitten/components";
 import { AnimatePresence, MotiView } from "moti";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import CustomImage from "./Image";
 import { RegularText } from "./Text";
 
@@ -71,15 +71,10 @@ const OurCard = ({
           activeOpacity={0.7}
         >
           <Layout style={styles.cardContent}>
-            <RegularText
-              title={content}
-              numberOfLines={2}
-              style={{ width: 200 }}
-            />
             <CustomImage
               source={{ uri: imageUrl }}
               style={styles.image}
-              resizeMode="contain"
+              resizeMode="cover"
             />
           </Layout>
         </Card>
@@ -99,11 +94,10 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: Responsive.height(1),
     lineHeight: 25,
-    textAlign: "justify",
     textTransform: "capitalize",
     fontWeight: "bold",
   },
-  image: { height: 100, width: 120 },
+  image: { height: 100, width: "100%" },
 
   footer: {
     flexDirection: "row",
