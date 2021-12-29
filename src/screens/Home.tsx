@@ -1,4 +1,4 @@
-import bounce from "@assets/bounce.json";
+import bounce from "@assets/egg-bounce.json";
 import { MemoizedCard } from "@src/components/common/Card";
 import Firebase from "@src/config/firebase";
 import { useAppTheme } from "@src/hooks/useAppTheme";
@@ -10,8 +10,8 @@ import MockRequest from "@src/services";
 import { AppTheme, Blog } from "@src/types";
 import { Icon, Layout } from "@ui-kitten/components";
 import LottieView from "lottie-react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { FlatList, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 
 const request = new MockRequest();
 
@@ -20,15 +20,12 @@ interface HomeState {
   fetching: boolean;
 }
 const HomeScreen = () => {
-  const { toggleTheme, theme } = useAppTheme();
-  const [fetching, setFetching] = useState(false);
-
   const [state, setState] = useState<HomeState>({
     data: [],
     fetching: false,
   });
 
-  var animation = useRef<LottieView | null>();
+  const { toggleTheme, theme } = useAppTheme();
 
   const logout = () => {
     Firebase.auth().signOut();
@@ -39,7 +36,10 @@ const HomeScreen = () => {
   }, []);
 
   const onFetchData = () => {
-    setFetching(true);
+    setState({
+      ...state,
+      fetching: true,
+    });
     request
       .getAll()
       .then((data) => {
@@ -50,7 +50,10 @@ const HomeScreen = () => {
         });
       })
       .catch((error) => {
-        setFetching(false);
+        setState({
+          ...state,
+          fetching: false,
+        });
       });
   };
 
@@ -60,32 +63,25 @@ const HomeScreen = () => {
 
   const renderAnimation = () => {
     return (
-      <>
-        <LottieView
-          ref={(animation) => {
-            animation = animation;
-          }}
-          source={bounce}
-          autoPlay
-          speed={1.5}
-        />
-      </>
+      <LottieView source={bounce} autoPlay resizeMode="contain" speed={1.5} />
     );
   };
 
-  if (fetching) {
+  if (state.fetching) {
     return renderAnimation();
   }
 
   const renderToggleIcon = () => {
     const iconName = theme === AppTheme.DARK ? "moon" : "sun";
     return (
-      <Icon
-        style={styles.icon}
-        fill="#8F9BB3"
-        name={iconName}
-        onPress={logout}
-      />
+      <TouchableOpacity onPress={toggleTheme}>
+        <Icon
+          style={styles.icon}
+          fill="#8F9BB3"
+          name={iconName}
+          onPress={toggleTheme}
+        />
+      </TouchableOpacity>
     );
   };
 

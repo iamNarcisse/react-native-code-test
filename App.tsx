@@ -8,13 +8,11 @@ import { AppTheme } from "@src/types";
 import { default as theme } from "@theme/dark-theme.json";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import AppLoading from "expo-app-loading";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
 import mapping from "./mapping.json";
 
 const App = () => {
-  const [ready, setIsReady] = useState(false);
   const [activeTheme, setTheme] = useState(AppTheme.LIGHT);
 
   const toggleTheme = (theme = AppTheme.DARK) => {

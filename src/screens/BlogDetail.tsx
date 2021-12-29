@@ -55,8 +55,6 @@ const BlogDetailScreen = ({}) => {
 
   const handleLayout = (event: LayoutChangeEvent) => {};
 
-  const handleNotification = () => {};
-
   return (
     <Layout style={styles.container}>
       <ScrollView onLayout={handleLayout} onScrollEndDrag={handleScroll}>
