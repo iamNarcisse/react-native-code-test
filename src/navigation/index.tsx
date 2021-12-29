@@ -1,12 +1,35 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import {
+  createNativeStackNavigator,
+  NativeStackHeaderProps,
+} from "@react-navigation/native-stack";
+import { RegularText } from "@src/components/common/Text";
 import Firebase from "@src/config/firebase";
 import { useAppAuthentication } from "@src/hooks/useAuthentication";
 import Logger from "@src/lib/Logger";
 import BlogDetailScreen from "@src/screens/BlogDetailScreen";
 import HomeScreen from "@src/screens/HomeScreen";
 import LoginScreen from "@src/screens/LoginScreen";
+import { Icon, Layout } from "@ui-kitten/components";
 import React, { Fragment, useEffect } from "react";
+import { StyleSheet } from "react-native";
+
+const Header = (props: NativeStackHeaderProps) => {
+  const goBack = () => {
+    props.navigation.goBack();
+  };
+
+  return (
+    <Layout style={{ marginTop: 40, paddingHorizontal: 10 }}>
+      <Icon
+        onPress={goBack}
+        name="arrow-back-outline"
+        fill="#8F9BB3"
+        style={styles.icon}
+      />
+    </Layout>
+  );
+};
 
 const auth = Firebase.auth();
 
@@ -24,7 +47,7 @@ const ROUTES = [
     name: "DetailScreen",
     component: BlogDetailScreen,
     option: {
-      headerShown: true,
+      header: Header,
       title: "",
     },
   },
@@ -90,3 +113,10 @@ const RootNavigator = () => {
 };
 
 export { RootNavigator };
+
+const styles = StyleSheet.create({
+  icon: {
+    width: 32,
+    height: 32,
+  },
+});

@@ -189,5 +189,6 @@ const styles = StyleSheet.create({
   headerMetaContainer: {
     justifyContent: "center",
     flexDirection: "row",
+    paddingBottom: 15,
   },
 });

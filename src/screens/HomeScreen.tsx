@@ -78,14 +78,21 @@ const HomeScreen = () => {
   const renderToggleIcon = () => {
     const iconName = theme === AppTheme.DARK ? "moon" : "sun";
     return (
-      <TouchableOpacity onPress={logout}>
+      <Layout style={styles.iconContainer}>
+        <Icon
+          style={styles.icon}
+          fill="#8F9BB3"
+          name={"log-out-outline"}
+          onPress={logout}
+        />
+
         <Icon
           style={styles.icon}
           fill="#8F9BB3"
           name={iconName}
-          onPress={logout}
+          onPress={toggleTheme}
         />
-      </TouchableOpacity>
+      </Layout>
     );
   };
 
@@ -128,5 +135,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     padding: 10,
+  },
+  iconContainer: {
+    paddingTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
