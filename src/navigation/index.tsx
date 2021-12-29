@@ -15,6 +15,7 @@ const ROUTES = [
     component: HomeScreen,
     option: {
       headerShown: false,
+      title: "My List",
     },
   },
 

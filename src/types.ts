@@ -1,5 +1,7 @@
 // Component Types
 
+import { RouteProp } from "@react-navigation/native";
+
 /**
  * Text Input
  */
@@ -24,4 +26,18 @@ export interface Blog {
   author: string;
   datePublished: string;
   views: number;
+}
+
+export interface ObjectLiteral {
+  [key: string]: any;
+}
+export interface BlogDetailRouteProp extends RouteProp<ObjectLiteral> {
+  params: {
+    title?: string;
+    content: string;
+    imageUrl: string;
+    views: number;
+    author: string;
+    datePublished: string;
+  };
 }

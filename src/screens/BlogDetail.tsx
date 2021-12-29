@@ -1,9 +1,11 @@
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import CustomImage from "@src/components/common/Image";
 import { RegularText, TitleText } from "@src/components/common/Text";
+import { dateToLL } from "@src/helpers/date";
 import Responsive from "@src/lib/responsive";
+import { BlogDetailRouteProp } from "@src/types";
 import { Layout } from "@ui-kitten/components";
-import React, { useState } from "react";
+import React from "react";
 import {
   LayoutChangeEvent,
   NativeScrollEvent,
@@ -13,26 +15,10 @@ import {
   View,
 } from "react-native";
 
-interface ObjectLiteral {
-  [key: string]: any;
-}
-interface BlogDetailRouteProp extends RouteProp<ObjectLiteral> {
-  params: { title?: string; content: string; imageUrl: string };
-}
-
-const BlogDetailScreen = ({}) => {
-  let layoutHeight = 0;
-
+const BlogDetailScreen = () => {
   const route = useRoute<BlogDetailRouteProp>();
-
   const notifList: any = {};
-
-  const [state, setState] = useState({
-    layoutHeight: 0,
-  });
-
   const { title, content } = route.params;
-
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const layoutHeight = event.nativeEvent.layoutMeasurement.height;
     const contentSizeHeight = event.nativeEvent.contentSize.height - 20;
@@ -51,27 +37,34 @@ const BlogDetailScreen = ({}) => {
     }
   };
 
-  console.log(notifList);
-
   const handleLayout = (event: LayoutChangeEvent) => {};
+
+  const headerMetaInfo = () => {
+    return (
+      <View style={styles.headerMetaContainer}>
+        <RegularText title={`${route.params.author} | `} />
+        <RegularText title={dateToLL(route.params.datePublished)} />
+      </View>
+    );
+  };
 
   return (
     <Layout style={styles.container}>
       <ScrollView onLayout={handleLayout} onScrollEndDrag={handleScroll}>
+        <TitleText style={styles.titleText} title={title} />
+        {headerMetaInfo()}
         <CustomImage
           source={{ uri: route.params.imageUrl }}
           style={styles.imageContainer}
           resizeMode="contain"
         />
-
-        <View style={styles.contentContainer}>
-          <TitleText title={title} />
+        <Layout style={styles.contentContainer} level="2">
           <RegularText
             style={styles.paragraphText}
             category="p1"
             title={content}
           />
-        </View>
+        </Layout>
       </ScrollView>
     </Layout>
   );
@@ -91,9 +84,20 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 10,
     flex: 1,
+    paddingHorizontal: 20,
+    borderRadius: 10,
   },
   paragraphText: {
     marginBottom: 10,
     textAlign: "justify",
+  },
+  titleText: {
+    textAlign: "center",
+    textTransform: "capitalize",
+  },
+
+  headerMetaContainer: {
+    justifyContent: "center",
+    flexDirection: "row",
   },
 });

@@ -33,6 +33,10 @@ const HomeScreen = () => {
 
   useEffect(() => {
     onFetchData();
+
+    return () => {
+      onFetchData();
+    };
   }, []);
 
   const onFetchData = () => {
