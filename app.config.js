@@ -1,7 +1,9 @@
+import "dotenv/config";
+
 export default {
   expo: {
-    name: "expo-firebase-auth-example",
-    slug: "expo-firebase-auth-example",
+    name: "Stayr",
+    slug: "stayr-rn-test",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",

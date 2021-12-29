@@ -1,7 +1,7 @@
 import * as FileSystem from "expo-file-system";
 import * as Crypto from "expo-crypto";
 
-export class CustomImageCache {
+export class ImageCachManager {
   private imageDir() {
     const dir = FileSystem.cacheDirectory + "stayr/";
     return dir;
@@ -29,15 +29,24 @@ export class CustomImageCache {
     return dir + `${hash}`;
   }
 
-  async getImageUri(uri: string): Promise<string> {
+  async getImageUri(uri: string): Promise<string | undefined> {
     try {
       await this.ensureDirectoryExists();
       const fileUri = await this.getFileUri(uri);
 
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
 
-      if (!fileInfo.exists) {
-        await FileSystem.downloadAsync(uri, fileUri);
+      if (fileInfo.exists) {
+        return fileInfo.uri;
+      }
+
+      const response = await FileSystem.createDownloadResumable(
+        uri,
+        fileUri
+      ).downloadAsync();
+
+      if (response && response?.status !== 200) {
+        return undefined;
       }
 
       return fileUri;

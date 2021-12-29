@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Firebase from "@src/config/firebase";
 import { useAppAuthentication } from "@src/hooks/useAuthentication";
+import Logger from "@src/lib/Logger";
 import BlogDetailScreen from "@src/screens/BlogDetailScreen";
 import HomeScreen from "@src/screens/HomeScreen";
 import LoginScreen from "@src/screens/LoginScreen";
@@ -70,7 +71,9 @@ const RootNavigator = () => {
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChange();
-    return unsubscribeAuth;
+    return () => {
+      return unsubscribeAuth;
+    };
   }, []);
 
   const onAuthStateChange = () => {
@@ -78,7 +81,7 @@ const RootNavigator = () => {
       try {
         authenticatedUser ? setUser(authenticatedUser) : setUser(null);
       } catch (error) {
-        console.log(error);
+        Logger.log(error);
       }
     });
   };

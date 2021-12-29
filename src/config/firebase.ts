@@ -1,14 +1,15 @@
 import firebase from "firebase/app";
+import Constants from "expo-constants";
 import "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDh5BtDMa6WScd-A6tcHLxYBS1sUP4tEzU",
-  authDomain: "stayr-71ae0.firebaseapp.com",
-  projectId: "stayr-71ae0",
-  storageBucket: "stayr-71ae0.appspot.com",
-  messagingSenderId: "858622376835",
-  appId: "1:858622376835:web:8d751252e841c4565894b6",
+  apiKey: Constants.manifest.extra?.apiKey,
+  authDomain: Constants.manifest.extra?.authDomain,
+  projectId: Constants.manifest.extra?.projectId,
+  storageBucket: Constants.manifest.extra?.storageBucket,
+  messagingSenderId: Constants.manifest.extra?.messagingSenderId,
+  appId: Constants.manifest.extra?.appId,
 };
 
 const Firebase = firebase.initializeApp(firebaseConfig);

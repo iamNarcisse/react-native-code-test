@@ -1,13 +1,14 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import Box from "@src/components/common/Box";
+import { AppButton } from "@src/components/common/Button";
 import { TextInput } from "@src/components/common/Input";
 import { RegularText, TitleText } from "@src/components/common/Text";
 import Firebase from "@src/config/firebase";
 import Responsive from "@src/lib/responsive";
-import { Button, Layout } from "@ui-kitten/components";
+import { Layout } from "@ui-kitten/components";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { ActivityIndicator, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import * as yup from "yup";
 const auth = Firebase.auth();
 
@@ -24,6 +25,7 @@ type FormField = {
 type FormType = {
   name: "password" | "email";
   label?: string;
+  secured?: boolean;
 };
 
 const FORM: Array<FormType> = [
@@ -34,6 +36,7 @@ const FORM: Array<FormType> = [
   {
     name: "password",
     label: "Password",
+    secured: true,
   },
 ];
 const LoginScreen = () => {
@@ -60,10 +63,7 @@ const LoginScreen = () => {
         ...state,
         loading: true,
       });
-      const response = await auth.signInWithEmailAndPassword(
-        data.email,
-        data.password
-      );
+      await auth.signInWithEmailAndPassword(data.email, data.password);
       setState({
         ...state,
         loading: false,
@@ -93,6 +93,7 @@ const LoginScreen = () => {
               return (
                 <Box>
                   <TextInput
+                    secureTextEntry={item.secured}
                     onBlur={onBlur}
                     onChangeText={(event) => {
                       if (state.errorMsg) {
@@ -127,13 +128,13 @@ const LoginScreen = () => {
       ) : null}
 
       <Box>
-        <Button
+        <AppButton
           onPress={handleSubmit(onSubmit)}
           status="primary"
           disabled={state.loading}
-        >
-          {state.loading ? <ActivityIndicator /> : "Login"}
-        </Button>
+          loading={state.loading}
+          title="Login"
+        />
       </Box>
     </Layout>
   );

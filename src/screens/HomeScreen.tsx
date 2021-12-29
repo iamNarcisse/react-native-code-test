@@ -78,12 +78,12 @@ const HomeScreen = () => {
   const renderToggleIcon = () => {
     const iconName = theme === AppTheme.DARK ? "moon" : "sun";
     return (
-      <TouchableOpacity onPress={toggleTheme}>
+      <TouchableOpacity onPress={logout}>
         <Icon
           style={styles.icon}
           fill="#8F9BB3"
           name={iconName}
-          onPress={toggleTheme}
+          onPress={logout}
         />
       </TouchableOpacity>
     );

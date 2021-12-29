@@ -1,6 +1,7 @@
 import { Icon, Input, InputProps, Text } from "@ui-kitten/components";
 import React from "react";
 import { StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
 
 interface TextInputProps extends InputProps {
   placeholder?: string;
@@ -30,14 +31,14 @@ export const PasswordInput = ({
 
   const renderIcon = (props: any) => (
     <TouchableWithoutFeedback onPress={toggleSecureEntry}>
-      {/* <Icon {...props} name={secureTextEntry ? "eye-off" : "eye"} /> */}
+      <Icon {...props} name={secureTextEntry ? "eye-off" : "eye"} />
     </TouchableWithoutFeedback>
   );
 
   const renderCaption = () => {
     return (
       <View>
-        {/* {AlertIcon(styles.captionIcon)} */}
+        {AlertIcon(styles.captionIcon)}
         <Text>Should contain at least 8 symbols</Text>
       </View>
     );
@@ -49,7 +50,7 @@ export const PasswordInput = ({
       placeholder={placeholder}
       label={label}
       caption={renderCaption}
-      // accessoryRight={renderIcon}
+      accessoryRight={renderIcon}
       secureTextEntry={secureTextEntry}
       onChangeText={(nextValue) => setValue(nextValue)}
     />

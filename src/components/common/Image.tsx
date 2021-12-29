@@ -1,5 +1,6 @@
-import { CustomImageCache } from "@src/lib/CacheImage";
-import React, { useEffect, useState } from "react";
+import { ImageCachManager } from "@src/lib/CacheImage";
+import Logger from "@src/lib/Logger";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -9,8 +10,7 @@ import {
   InteractionManager,
   StyleProp,
 } from "react-native";
-
-const useCache = new CustomImageCache();
+const useCache = new ImageCachManager();
 
 interface ImageProp extends ImageProps {
   style?: StyleProp<ImageStyle>;
@@ -18,6 +18,7 @@ interface ImageProp extends ImageProps {
 }
 
 const CustomImage = ({ source, ...rest }: ImageProp) => {
+  let isMounted = useRef(false).current;
   const [state, setState] = useState({
     uri: null,
     working: false,
@@ -34,31 +35,48 @@ const CustomImage = ({ source, ...rest }: ImageProp) => {
     useCache
       .getImageUri(_source.uri)
       .then((result) => {
-        setState({
-          ...state,
-          working: false,
-          uri: result as any,
-        });
+        if (isMounted) {
+          setState({
+            ...state,
+            working: false,
+            uri: result as any,
+          });
+        }
       })
       .catch((error) => {
-        console.log(error);
-        setState({
-          ...state,
-          working: false,
-        });
+        if (isMounted) {
+          setState({
+            ...state,
+            working: false,
+          });
+        }
+
+        Logger.log(error);
       });
   };
 
   useEffect(() => {
+    isMounted = true;
+
     if (_source?.uri) {
-      InteractionManager.runAfterInteractions(async () => {
-        expensiveOperation();
+      InteractionManager.runAfterInteractions(() => {
+        if (isMounted) {
+          expensiveOperation();
+        }
       });
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
-  if (!state.uri) {
+  if (!state.uri && state.working) {
     return <ActivityIndicator />;
+  }
+
+  if (!state.uri && !state.working) {
+    return null;
   }
 
   const mySource = _source?.uri ? { uri: state.uri } : source;
