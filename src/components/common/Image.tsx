@@ -9,6 +9,7 @@ import {
   InteractionManager,
   StyleProp,
 } from "react-native";
+
 const useCache = new CustomImageCache();
 
 interface ImageProp extends ImageProps {

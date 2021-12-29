@@ -1,14 +1,13 @@
 import * as eva from "@eva-design/eva";
 import { ThemeContext } from "@src/context";
-import useFonts from "@src/hooks/useFont";
 import { useNotification } from "@src/hooks/useNotification";
-import Logger from "@src/lib/Logger";
 import { RootNavigator } from "@src/navigation";
 import { AuthenticatedUserProvider } from "@src/navigation/AuthenticatedProvider";
 import { AppTheme } from "@src/types";
 import { default as theme } from "@theme/dark-theme.json";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { useFonts } from "expo-font";
 import * as Notifications from "expo-notifications";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native";
@@ -37,13 +36,10 @@ const App = () => {
     setTheme(nextTheme);
   };
 
-  const LoadFonts = async () => {
-    await useFonts();
-  };
-
-  useEffect(() => {
-    LoadFonts().catch((error) => Logger.log(error));
-  }, []);
+  const [loaded] = useFonts({
+    Roboto: require("./assets/fonts/Roboto/Roboto.ttf"),
+    "Roboto-Bold": require("./assets/fonts/Roboto/Roboto-Bold.ttf"),
+  });
 
   useEffect(() => {
     const notificationListener = Notifications.addNotificationReceivedListener(
@@ -68,6 +64,10 @@ const App = () => {
       );
     };
   }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <ThemeContext.Provider value={{ theme: activeTheme, toggleTheme }}>
