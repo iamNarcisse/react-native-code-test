@@ -20,7 +20,7 @@ interface ImageProp extends ImageProps {
 const CustomImage = ({ source, ...rest }: ImageProp) => {
   let isMounted = useRef(false).current;
   const [state, setState] = useState({
-    uri: null,
+    uri: undefined,
     working: false,
   });
 
@@ -79,7 +79,9 @@ const CustomImage = ({ source, ...rest }: ImageProp) => {
     return null;
   }
 
-  const mySource = _source?.uri ? { uri: state.uri } : source;
+  const mySource: ImageSourcePropType = _source?.uri
+    ? { uri: state.uri }
+    : source;
   return <Image source={mySource} {...rest} />;
 };
 
