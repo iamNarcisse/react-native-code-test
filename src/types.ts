@@ -33,7 +33,7 @@ export interface ObjectLiteral {
 }
 export interface BlogDetailRouteProp extends RouteProp<ObjectLiteral> {
   params: {
-    title?: string;
+    title: string;
     content: string;
     imageUrl: string;
     views: number;

@@ -2,9 +2,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Firebase from "@src/config/firebase";
 import { useAppAuthentication } from "@src/hooks/useAuthentication";
-import BlogDetailScreen from "@src/screens/BlogDetail";
-import HomeScreen from "@src/screens/Home";
-import LoginScreen from "@src/screens/Login";
+import BlogDetailScreen from "@src/screens/BlogDetailScreen";
+import HomeScreen from "@src/screens/HomeScreen";
+import LoginScreen from "@src/screens/LoginScreen";
 import React, { Fragment, useEffect } from "react";
 
 const auth = Firebase.auth();
