@@ -19,6 +19,7 @@ import { AnimatePresence, MotiView } from "moti";
 import { useNotification } from "@src/hooks/useNotification";
 import { getHashedValue } from "@src/helpers/getIdentifier";
 import Logger from "@src/lib/Logger";
+import { CircularProgress } from "@src/components/common/CircularProgress";
 
 const BENCHMARK = 0.7;
 
@@ -34,7 +35,10 @@ const BlogDetailScreen = () => {
     hasReadHeight: 0,
     contentSizeHeight: 0,
     readingComplete: false,
+    progress: 0,
   });
+
+  const [showProgress, setShowProgress] = useState(false);
 
   const handleScheduleNotification = async () => {
     const hasReadHeight = hasReadHeightRef.current;
@@ -70,22 +74,25 @@ const BlogDetailScreen = () => {
   const handleScroll = async (
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) => {
+    const progress = computeProgress(event);
     const contentSizeHeight = event.nativeEvent.contentSize.height - 20;
     const hasReadHeight =
       event.nativeEvent.contentOffset.y + state.layoutHeight;
-    hasReadHeightRef.current = hasReadHeight;
+
     const readBenchMark = BENCHMARK * contentSizeHeight;
+    hasReadHeightRef.current = hasReadHeight;
+
     if (hasReadHeight > readBenchMark && !state.readingComplete) {
       completedReading.current = true;
       //User has completed reading article; cancel local notification if any
       const notificationIdentifier = await getHashedValue(title);
       await cancelNotification(notificationIdentifier);
-
       setState({
         ...state,
         readingComplete: true,
         contentSizeHeight,
         hasReadHeight,
+        progress,
       });
 
       return;
@@ -95,7 +102,19 @@ const BlogDetailScreen = () => {
       ...state,
       contentSizeHeight,
       hasReadHeight,
+      progress,
     });
+  };
+
+  const computeProgress = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const contentSize = event.nativeEvent.contentSize.height - 20;
+    const yOffSet = event.nativeEvent.contentOffset.y;
+    const hasReadHeight = yOffSet + state.layoutHeight;
+    if (yOffSet <= 0) {
+      return 0;
+    }
+    const level = (hasReadHeight / contentSize) * 100;
+    return level >= 100 ? 100 : Math.floor(level);
   };
 
   const onLayout = (event: LayoutChangeEvent) => {
@@ -115,9 +134,35 @@ const BlogDetailScreen = () => {
     );
   };
 
+  const renderProgress = () => {
+    if (!showProgress) {
+      return null;
+    }
+
+    return (
+      <Layout style={styles.progress}>
+        <CircularProgress size={50} width={5} fill={state.progress} />
+      </Layout>
+    );
+  };
+
+  const onShowProgress = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (event.nativeEvent.contentOffset.y > 0) {
+      setShowProgress(true);
+    } else {
+      setShowProgress(false);
+    }
+  };
+
   return (
     <Layout style={styles.container}>
-      <ScrollView onLayout={onLayout} onScrollEndDrag={handleScroll}>
+      {renderProgress()}
+      <ScrollView
+        onLayout={onLayout}
+        onScrollEndDrag={handleScroll}
+        onScroll={onShowProgress}
+        scrollEventThrottle={16}
+      >
         <AnimatePresence>
           <MotiView
             from={{
@@ -185,6 +230,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     paddingBottom: 15,
+  },
+
+  progress: {
+    position: "absolute",
+    zIndex: 999,
+    right: 10,
+    top: 0,
+    backgroundColor: "transparent",
   },
 });
 

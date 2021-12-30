@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     height: 32,
   },
   header: {
-    paddingTop: Responsive.height(5),
+    paddingTop: Responsive.height(2),
     paddingBottom: Responsive.height(2),
     paddingHorizontal: 10,
   },
