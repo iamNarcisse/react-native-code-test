@@ -5,7 +5,7 @@ import { dateToLL } from "@src/helpers/date";
 import Responsive from "@src/lib/responsive";
 import { BlogDetailRouteProp } from "@src/types";
 import { Layout } from "@ui-kitten/components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   LayoutChangeEvent,
   NativeScrollEvent,
@@ -17,7 +17,7 @@ import {
 
 import { AnimatePresence, MotiView } from "moti";
 import { useNotification } from "@src/hooks/useNotification";
-import { getHasValue } from "@src/helpers/getIdentifier";
+import { getHashedValue } from "@src/helpers/getIdentifier";
 import Logger from "@src/lib/Logger";
 
 const BENCHMARK = 0.7;
@@ -27,6 +27,8 @@ const BlogDetailScreen = () => {
   const navigation = useNavigation();
   const { title, content } = route.params;
   const { scheduleNotification, cancelNotification } = useNotification();
+  const hasReadHeightRef = useRef<number | undefined>();
+  const completedReading = useRef<boolean | undefined>(false);
   const [state, setState] = useState({
     layoutHeight: 0,
     hasReadHeight: 0,
@@ -34,53 +36,51 @@ const BlogDetailScreen = () => {
     readingComplete: false,
   });
 
-  const { layoutHeight, hasReadHeight, readingComplete } = state;
-
   const handleScheduleNotification = async () => {
+    const hasReadHeight = hasReadHeightRef.current;
+    const _completedReading = completedReading.current;
+
     // User just visited page but didn't  scroll(i.e read);
     if (!hasReadHeight) {
       return;
     }
 
-    if (readingComplete) {
+    if (_completedReading) {
       return;
     }
 
     // Schedule local notification
-    const notificationIdentifier = await getHasValue(title);
+    const notificationIdentifier = await getHashedValue(title);
     try {
       await scheduleNotification({
         identifier: notificationIdentifier,
         title,
       });
-
-      // console.log("SCHEDULED ===>", notificationIdentifier);
     } catch (error) {
       Logger.log(error);
     }
   };
 
   useEffect(() => {
-    const handler = navigation.addListener("beforeRemove", () => {
+    navigation.addListener("beforeRemove", async () => {
       handleScheduleNotification();
     });
-
-    if (!readingComplete) {
-      handler();
-    }
-  }, [navigation, readingComplete]);
+  }, []);
 
   const handleScroll = async (
     event: NativeSyntheticEvent<NativeScrollEvent>
   ) => {
     const contentSizeHeight = event.nativeEvent.contentSize.height - 20;
-    const hasReadHeight = event.nativeEvent.contentOffset.y + layoutHeight;
+    const hasReadHeight =
+      event.nativeEvent.contentOffset.y + state.layoutHeight;
+    hasReadHeightRef.current = hasReadHeight;
     const readBenchMark = BENCHMARK * contentSizeHeight;
-
-    if (hasReadHeight > readBenchMark && !readingComplete) {
-      //User has completed reading article; cancel local notification
-      const notificationIdentifier = await getHasValue(title);
+    if (hasReadHeight > readBenchMark && !state.readingComplete) {
+      completedReading.current = true;
+      //User has completed reading article; cancel local notification if any
+      const notificationIdentifier = await getHashedValue(title);
       await cancelNotification(notificationIdentifier);
+
       setState({
         ...state,
         readingComplete: true,

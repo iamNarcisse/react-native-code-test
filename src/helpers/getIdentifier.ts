@@ -1,6 +1,6 @@
 import * as Crypto from "expo-crypto";
 
-const getHasValue = async (param: string): Promise<string> => {
+const getHashedValue = async (param: string): Promise<string> => {
   const hashedUri = await Crypto.digestStringAsync(
     Crypto.CryptoDigestAlgorithm.SHA256,
     param
@@ -8,4 +8,4 @@ const getHasValue = async (param: string): Promise<string> => {
   return hashedUri;
 };
 
-export { getHasValue };
+export { getHashedValue };
